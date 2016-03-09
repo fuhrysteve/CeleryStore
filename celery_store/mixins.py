@@ -37,6 +37,10 @@ class PeriodicTaskMixin(object):
         raise NotImplementedError
 
     @property
+    def total_run_count(self):
+        raise NotImplementedError
+
+    @property
     def options(self):
         '''
         return {

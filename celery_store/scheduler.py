@@ -23,7 +23,12 @@ class StoreEntry(ScheduleEntry):
     def is_due(self):
         if self.periodic_task.is_active:
             return self.schedule.is_due(self.last_run_at)
-        return False, 5.0   # 5 second delay for re-enable.
+        return False, 5.0  # 5 second delay for re-enable.
+
+    def __next__(self):
+        return self.__class__(self.periodic_task)
+
+    next = __next__  # for 2to3
 
 
 class StoreScheduler(Scheduler):
