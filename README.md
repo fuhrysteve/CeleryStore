@@ -33,7 +33,23 @@ such as SQLAlchemy, Django, etc.
 
 
 `PeriodicTaskMixin` and `TaskScheduleMixin` provide all the required abstract methods
-that Celery Store needs to 
+that CeleryStore and celery beat need to do their job.
+
+You need to extend and implement these two mixins, and tell CeleryStore where they are
+by putting these two configurations in your celery config:
+
+```python
+CELERYSTORE_PERIODIC_TASK='example.PeriodicTask'
+CELERYSTORE_TASK_SCHEDULE='example.TaskSchedule'
+```
+
+Then, you simply need to run celery beat with the CeleryStore scheduler:
+
+```bash
+celery beat -S celery_store.scheduler.StoreScheduler
+```
+
+That's it!
 
 ### Example
 
