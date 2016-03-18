@@ -1,5 +1,7 @@
 ## Celery Store: Backend agnostic Periodic Task Store
 
+[![Build Status](https://travis-ci.org/fuhrysteve/CeleryStore.svg?branch=master)](https://travis-ci.org/fuhrysteve/CeleryStore)
+
 
 ### The Problem
 
