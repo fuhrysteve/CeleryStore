@@ -37,4 +37,4 @@ that Celery Store needs to
 
 ### Example
 
-See [example](example/README.md)
+See [example](example/)
