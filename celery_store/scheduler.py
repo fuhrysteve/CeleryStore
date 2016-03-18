@@ -1,7 +1,9 @@
 from __future__ import absolute_import
 
 import logging
+import importlib
 
+from celery import current_app
 from celery.beat import Scheduler, ScheduleEntry
 from celery.schedules import maybe_schedule
 from celery.utils.log import get_logger
@@ -9,24 +11,30 @@ from celery.utils.log import get_logger
 logger = get_logger(__name__)
 
 
+def import_from_string(string):
+    module_str, klass = string.rsplit('.', 1)
+    module = importlib.import_module(module_str)
+    return getattr(module, klass)
+
+
 class StoreEntry(ScheduleEntry):
 
-    def __init__(self, periodic_task):
-        self.periodic_task = periodic_task
-        self.task = periodic_task.get_task()
-        self.name = periodic_task.name
-        self.args = periodic_task.args
-        self.kwargs = periodic_task.kwargs
-        self.options = periodic_task.options
-        self.last_run_at = periodic_task.last_run_at
+    def __init__(self, schedule):
+        self.schedule = schedule
+        self.task = schedule.task
+        self.name = schedule.task.name
+        self.args = schedule.task.args
+        self.kwargs = schedule.task.kwargs
+        self.options = schedule.task.options
+        self.last_run_at = schedule.task.last_run_at
 
     def is_due(self):
-        if self.periodic_task.is_active:
-            return self.schedule.is_due(self.last_run_at)
+        if self.schedule.task.is_active:
+            return self.schedule.schedule.is_due(self.last_run_at)
         return False, 5.0  # 5 second delay for re-enable.
 
     def __next__(self):
-        return self.__class__(self.periodic_task)
+        return self.__class__(self.schedule)
 
     next = __next__  # for 2to3
 
@@ -38,9 +46,11 @@ class StoreScheduler(Scheduler):
         self._schedule = None
         self._has_made_initial_read = False
         self.app = current_app._get_current_object()
-        self.PeriodicTask = kwargs.get('PeriodicTask')
-        self.TaskSchedule = kwargs.get('TaskSchedule')
-        self._latest_change = self.TaskSchedule.get_latest_change_to_schedule()
+        self.PeriodicTask = import_from_string(
+            self.app.conf['CELERYSTORE_PERIODIC_TASK'])
+        self.TaskSchedule = import_from_string(
+            self.app.conf['CELERYSTORE_TASK_SCHEDULE'])
+        self._latest_change = self.PeriodicTask.get_latest_change_to_schedule()
         super(StoreScheduler, self).__init__(*args, **kwargs)
 
     def schedule_changed(self):
@@ -55,7 +65,7 @@ class StoreScheduler(Scheduler):
         return False
 
     def setup_schedule(self):
-        self.install_default_entries(self.schedule)
+        #self.install_default_entries(self.schedule)
         self.update_from_dict(self.app.conf.CELERYBEAT_SCHEDULE)
 
     def all_as_schedule(self):
@@ -63,9 +73,9 @@ class StoreScheduler(Scheduler):
             self.__class__.__name__, 
         ))
         entries = {}
-        for periodic_task in self.PeriodicTask.get_all_with_active_schedules():
+        for schedule in self.PeriodicTask.get_all_with_active_schedules():
             try:
-                entries[task.name] = self.Entry(periodic_task)
+                entries[schedule.task.name] = self.Entry(schedule)
             except ValueError:
                 pass
         return entries

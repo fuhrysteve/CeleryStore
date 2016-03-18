@@ -1,0 +1,2 @@
+CELERYSTORE_PERIODIC_TASK='example.PeriodicTask'
+CELERYSTORE_TASK_SCHEDULE='example.TaskSchedule'

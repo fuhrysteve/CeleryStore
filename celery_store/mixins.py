@@ -7,9 +7,6 @@ class PeriodicTaskMixin(object):
     def name(self):
         raise NotImplementedError
 
-    def get_schedules(self):
-        raise NotImplementedError
-
     @classmethod
     def get_all_with_active_schedules(cls):
         raise NotImplementedError
@@ -26,7 +23,7 @@ class PeriodicTaskMixin(object):
 
     @property
     def args(self):
-        return (,)
+        return ()
 
     @property
     def kwargs(self):
@@ -42,16 +39,13 @@ class PeriodicTaskMixin(object):
 
     @property
     def options(self):
-        '''
-        return {
+        return {}
+        {
             'queue': self.queue,
             'exchange': self.exchange,
             'routing_key': self.routing_key,
             'expires': self.expires,
         }
-        
-        '''
-        raise NotImplementedError
 
     @classmethod
     def get_latest_change_to_schedule(cls):
@@ -67,6 +61,9 @@ class PeriodicTaskMixin(object):
 
 class TaskScheduleMixin(object):
 
+    @property
+    def schedule(self):
+        raise NotImplementedError
 
     @property
     def task(self):
