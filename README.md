@@ -12,9 +12,9 @@ celery also uses django.
 
 ### Enter Celery Store
 
-Celery Store is intended for folks who want to store their periodic tasks in a database, but
-do not want to use django. However if you are using Django, you can absolutely use this as well!
-Celery Store makes no assumptions.
+Celery Store is intended for folks who want to store their periodic tasks in a database (or
+whatever backend you choose to implement), but do not want to use django. However if you
+are using Django, you can absolutely use this as well!  Celery Store makes no assumptions.
 
 
 Celery Store's only dependency is the [celery standard library](http://www.celeryproject.org/).
@@ -22,10 +22,9 @@ Celery Store's only dependency is the [celery standard library](http://www.celer
 
 ### Installation and Getting Started
 
-Coming soon...
-
-
-### Implementation
+```bash
+pip install -e 'git+git@github.com:fuhrysteve/CeleryStore.git@master#egg=celery_store'
+```
 
 Celery Store can be adapted to fit any sort of data store. It makes no assumptions
 about your backend, but may in the future include optional extras for common libraries
