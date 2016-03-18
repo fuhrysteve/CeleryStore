@@ -45,7 +45,7 @@ class StoreScheduler(Scheduler):
     def __init__(self, *args, **kwargs):
         self._schedule = None
         self._has_made_initial_read = False
-        self.app = current_app._get_current_object()
+        self.app = kwargs.get('app', current_app._get_current_object())
         self.PeriodicTask = import_from_string(
             self.app.conf['CELERYSTORE_PERIODIC_TASK'])
         self.TaskSchedule = import_from_string(
@@ -57,8 +57,8 @@ class StoreScheduler(Scheduler):
         latest_change = self.PeriodicTask.get_latest_change_to_schedule()
         try:
             if latest_change and latest_change > (self._latest_change
-                                                if self._latest_change
-                                                else latest_change):
+                                                  if self._latest_change
+                                                  else latest_change):
                 return True
         finally:
             self._latest_change = latest_change
