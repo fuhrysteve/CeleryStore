@@ -82,8 +82,7 @@ class StoreScheduler(Scheduler):
         return False
 
     def setup_schedule(self):
-        from celery.contrib import rdb; rdb.set_trace()
-        self.install_default_entries(self.schedule)
+        #self.install_default_entries(self.schedule)
         self.update_from_dict(self.app.conf.CELERYBEAT_SCHEDULE)
 
     def all_as_schedule(self):
