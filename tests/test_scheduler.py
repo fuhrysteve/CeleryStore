@@ -27,7 +27,7 @@ class MockPeriodicTask(PeriodicTaskMixin):
                              dt.timedelta(seconds=(60*4) + 50))
     
     @property
-    def name(self):
+    def task_name(self):
         return 'My Task'
 
     def get_schedules(self):

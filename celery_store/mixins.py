@@ -58,7 +58,6 @@ class PeriodicTaskMixin(object):
         raise NotImplementedError
 
 
-
 class TaskScheduleMixin(object):
 
     @property
